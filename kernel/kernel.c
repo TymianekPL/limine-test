@@ -3,8 +3,8 @@
 #include <limine.h>
 #include "debug.h"
 #include "gdt.h"
-// #include "isr.h"
-
+#include "pic.h"
+#include "isr.h"
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
 // be made volatile or equivalent.
@@ -18,7 +18,6 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
 
 static void done(void)
 {
-    __asm__ volatile("cli");
     for (;;)
     {
         __asm__("hlt");
@@ -88,8 +87,14 @@ void _start(void)
     irq_install();
 
     ok("...Done", 7);
+    info("...Remapping PIC", 16);
+    PIC_remap(0x20, 0x28);
+    IRQ_clear_mask(IRQ1);
+
+    ok("...Done", 7);
 
     ok("Initialized kernel!", 19);
+    __asm__ volatile("sti");
 
     // We're done, just hang...
     done();

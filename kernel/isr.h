@@ -37,7 +37,7 @@ extern idt_register_t idt_reg;
 #endif
 
 /* Functions implemented in idt.c */
-void set_idt_gate(int n, uint32_t handler);
+void set_idt_gate(int n, uint64_t handler);
 void set_idt();
 
 /* ISRs reserved for CPU exceptions */

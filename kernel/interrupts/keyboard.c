@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "isr.h"
+#include "ports.h"
 #include <stdint.h>
 
 #define BACKSPACE 0x0E
