@@ -34,4 +34,6 @@ extern GDT DefaultGDT;
 
 extern void LoadGDT(GDTDescriptor *gdtDescriptor);
 
+void InitializeGDT(uint64_t *gdt);
+
 #endif

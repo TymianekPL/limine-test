@@ -42,7 +42,6 @@ void fillSquare(int x, int y, int volX, int volY, uint32_t color)
 
 extern void disablePIC();
 
-static GDTDescriptor gdtDescriptor;
 // The following will be our kernel's entry point.
 void _start(void)
 {
@@ -52,15 +51,27 @@ void _start(void)
         done();
     }
     struct limine_framebuffer *buffer = framebuffer_request.response->framebuffers[0];
-    debug_init(terminal_request);
-    fillSquare(0, 0, buffer->width, buffer->height, 0x111111);
-
-    info("Initializing...", 15);
-    gdtDescriptor.Size = sizeof(GDT);
-    gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
-    LoadGDT(&gdtDescriptor);
 
     struct limine_terminal *terminal = terminal_request.response->terminals[0];
+
+    static uint64_t gdt[] = {
+        0x0000000000000000,
+
+        0x00009a000000ffff,
+        0x000093000000ffff,
+
+        0x00cf9a000000ffff,
+        0x00cf93000000ffff,
+
+        0x00af9b000000ffff,
+        0x00af93000000ffff,
+
+        0x00affb000000ffff,
+        0x00aff3000000ffff,
+    };
+
+    InitializeGDT(&gdt);
+
     terminal_request.response->write(terminal, "Test", 4);
 
     // We're done, just hang...
