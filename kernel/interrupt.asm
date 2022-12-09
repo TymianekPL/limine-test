@@ -49,25 +49,11 @@ isr_common_stub:
 ; and the 'pop ebx'
 irq_common_stub:
     pusha
-    mov ax, ds
-    push rax
-    mov ax, 0x30
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    push rsp
-    cld
-    call irq_handler ; Different than the ISR code
-    pop rbx  ; Different than the ISR code
-    pop rbx
-    mov ds, bx
-    mov es, bx
-    mov fs, bx
-    mov gs, bx
+    mov rdi, rsp
+    call isr_handler
     popa
-    add esp, 8
-    iret
+    add rsp, 16
+    iretq
 
 ; We don't get information about which interrupt was caller
 ; when the handler is run, so we will need to have a different handler
