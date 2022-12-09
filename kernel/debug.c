@@ -5,6 +5,9 @@ struct limine_terminal_request terminal_request;
 void debug_init(struct limine_terminal_request term)
 {
      terminal_request = term;
+
+     struct limine_terminal *terminal = terminal_request.response->terminals[0];
+     terminal_request.response->write(terminal, "\e[48;2;17;17;17m\e[2J\e[H", 23);
 }
 
 void info(char *message, uint64_t size)
@@ -44,4 +47,10 @@ void error(char *message, uint64_t size)
      terminal_request.response->write(terminal, "[ERR] ", 7);
      terminal_request.response->write(terminal, message, size);
      terminal_request.response->write(terminal, "\n\e[0m", 6);
+}
+
+void cout(char chr)
+{
+     struct limine_terminal *terminal = terminal_request.response->terminals[0];
+     terminal_request.response->write(terminal, &chr, 1);
 }

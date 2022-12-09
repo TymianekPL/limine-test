@@ -3,6 +3,7 @@
 #include <limine.h>
 #include "debug.h"
 #include "gdt.h"
+// #include "isr.h"
 
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
@@ -52,8 +53,17 @@ void _start(void)
     }
     struct limine_framebuffer *buffer = framebuffer_request.response->framebuffers[0];
 
-    struct limine_terminal *terminal = terminal_request.response->terminals[0];
+    fillSquare(0, 0, buffer->width, buffer->height, 0x111111);
 
+    debug_init(terminal_request);
+
+    info("Initializing...", 16);
+
+    info("...ISR", 6);
+    isr_install();
+    ok("...Done", 7);
+
+    info("...GDT", 6);
     static uint64_t gdt[] = {
         0x0000000000000000,
 
@@ -71,8 +81,14 @@ void _start(void)
     };
 
     InitializeGDT(&gdt);
+    ok("...Done", 7);
 
-    terminal_request.response->write(terminal, "Test", 4);
+    info("...IRQ", 6);
+    irq_install();
+
+    ok("...Done", 7);
+
+    ok("Initialized kernel!", 19);
 
     // We're done, just hang...
     done();

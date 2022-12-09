@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "gdt.h": "c"
+        "gdt.h": "c",
+        "keyboard.h": "c",
+        "isr.h": "c",
+        "stdint.h": "c"
     }
 }

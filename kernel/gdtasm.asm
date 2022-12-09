@@ -12,7 +12,7 @@ LoadGDT:
     mov rax, 0x28
     push rax
     push rdi
-    ret
+    retfq
 
 disablePIC: 
     mov al, 0xff
