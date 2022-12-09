@@ -18,6 +18,7 @@ static volatile struct limine_framebuffer_request framebuffer_request = {
 
 static void done(void)
 {
+    __asm__ volatile("cli");
     for (;;)
     {
         __asm__("hlt");

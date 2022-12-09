@@ -10,7 +10,7 @@
 #define low_16(address) (uint16_t)((address)&0xffff)
 #define high_16(address) (uint16_t)(((address) >> 16) & 0xffff)
 
-struct idt_entry
+typedef struct idt_entry
 {
     uint16_t offset_low;
     uint16_t selector;
@@ -19,22 +19,7 @@ struct idt_entry
     uint16_t offset_mid;
     uint32_t offset_hi;
     uint32_t reserved;
-};
-
-/* How every interrupt gate (handler) is defined */
-typedef struct
-{
-    uint16_t low_offset; /* Lower 16 bits of handler function address */
-    uint16_t sel;        /* Kernel segment selector */
-    uint8_t always0;
-    /* First byte
-     * Bit 7: "Interrupt is present"
-     * Bits 6-5: Privilege level of caller (0=kernel..3=user)
-     * Bit 4: Set to 0 for interrupt gates
-     * Bits 3-0: bits 1110 = decimal 14 = "32 bit interrupt gate" */
-    uint8_t flags;
-    uint16_t high_offset; /* Higher 16 bits of handler function address */
-} __attribute__((packed)) idt_gate_t;
+} idt_entry;
 
 /* A pointer to the array of interrupt handlers.
  * Assembly instruction 'lidt' will read it */
@@ -47,7 +32,7 @@ typedef struct
 #ifndef ISRTEST_H
 #define ISRTEST_H
 #define IDT_ENTRIES 256
-extern idt_gate_t idt[IDT_ENTRIES];
+extern idt_entry idt[IDT_ENTRIES];
 extern idt_register_t idt_reg;
 #endif
 
@@ -128,15 +113,14 @@ extern void irq15();
  * - Pushed by the processor automatically
  * - `push byte`s on the isr-specific code: error code, then int number
  * - All the registers by pusha
- * - `push eax` whose lower 16-bits contain DS
+ * - `push rax` whose lower 16-bits contain DS
  */
 typedef struct
 {
-    uint32_t ds;                                         /* Data segment selector */
-    uint32_t edi, esi, ebp, useless, ebx, edx, ecx, eax; /* Pushed by pusha. */
-    uint32_t int_no, err_code;                           /* Interrupt number and error code (if applicable) */
-    uint32_t eip, cs, eflags, esp, ss;                   /* Pushed by the processor automatically */
-} registers_t;
+    uint64_t r15, r14, r13, r12, r11, r10, r9, r8;
+    uint64_t rbp, rdi, rsi, rdx, rcx, rbx, rax;
+    uint64_t int_no, error_code, rip, cs, rflags, rsp, ss;
+} __attribute__((packed)) registers_t;
 
 void isr_install();
 void isr_handler(registers_t *r);

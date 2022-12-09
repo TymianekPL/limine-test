@@ -3,13 +3,13 @@
 [extern irq_handler]
 
 %macro pusha 0
-    push rdi
-    push rsi 
-    push rbp 
-    push rbx 
-    push rdx 
-    push rcx 
     push rax
+    push rbx
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+    push rbp
     push r8
     push r9
     push r10
@@ -29,42 +29,22 @@
     pop r10
     pop r9
     pop r8
-    pop rax
-    pop rcx 
-    pop rdx 
-    pop rbx 
-    pop rbp 
-    pop rsi 
+    pop rbp
     pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
 %endmacro
 
-; Common ISR code
 isr_common_stub:
-    ; 1. Save CPU state
-	pusha ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
-	mov ax, ds ; Lower 16-bits of eax = ds.
-	push rax ; save the data segment descriptor
-	mov ax, 0x30  ; kernel data segment descriptor
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	push rsp ; registers_t *r
-    ; 2. Call C handler
-    cld ; C code following the sysV ABI requires DF to be clear on function entry
-	call isr_handler
-
-    ; 3. Restore state
-	pop rax
-    pop rax
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	popa
-	add esp, 8 ; Cleans up the pushed error code and pushed ISR number
-	iret ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
-
+    pusha
+    mov rdi, rsp
+    call isr_handler
+    popa
+    add rsp, 16
+    iretq
 ; Common IRQ code. Identical to ISR code except for the 'call'
 ; and the 'pop ebx'
 irq_common_stub:

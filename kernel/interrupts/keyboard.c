@@ -24,8 +24,7 @@ void user_input(char *message)
 {
 }
 
-static void
-KeyboardCallback(registers_t *regs)
+static void KeyboardCallback(registers_t *regs)
 {
     ok("lol", 3);
     /* The PIC leaves us the scancode in port 0x60 */
