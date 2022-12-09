@@ -59,10 +59,6 @@ void _start(void)
 
     info("Initializing...", 16);
 
-    info("...ISR", 6);
-    isr_install();
-    ok("...Done", 7);
-
     info("...GDT", 6);
     static uint64_t gdt[] = {
         0x0000000000000000,
@@ -81,6 +77,10 @@ void _start(void)
     };
 
     InitializeGDT(&gdt);
+    ok("...Done", 7);
+
+    info("...ISR", 6);
+    isr_install();
     ok("...Done", 7);
 
     info("...IRQ", 6);
