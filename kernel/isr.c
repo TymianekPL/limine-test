@@ -98,7 +98,7 @@ void isr_install()
 void isr_handler(registers_t *r)
 {
     /* To print the message which defines every exception */
-    char exception_messages[32][32] = {
+    char *exception_messages[32] = {
         "Division By Zero",       // 1
         "Debug",                  // 2
         "Non Maskable Interrupt", // 3
