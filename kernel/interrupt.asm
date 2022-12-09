@@ -50,7 +50,7 @@ isr_common_stub:
 irq_common_stub:
     pusha
     mov rdi, rsp
-    call isr_handler
+    call irq_handler
     popa
     add rsp, 16
     iretq
