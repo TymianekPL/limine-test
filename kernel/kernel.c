@@ -11,10 +11,10 @@
 
 static volatile struct limine_terminal_request terminal_request = {
     .id = LIMINE_TERMINAL_REQUEST,
-    .revision = 0};
+    .revision = 0 };
 static volatile struct limine_framebuffer_request framebuffer_request = {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
-    .revision = 0};
+    .revision = 0 };
 
 static void done(void)
 {
@@ -26,8 +26,8 @@ static void done(void)
 
 void putPixel(int x, int y, uint32_t pixel)
 {
-    struct limine_framebuffer *buffer = framebuffer_request.response->framebuffers[0];
-    *((uint32_t *)(buffer->address + 4 * (buffer->pitch / 4) * y + 4 * x)) = pixel;
+    struct limine_framebuffer* buffer = framebuffer_request.response->framebuffers[0];
+    *((uint32_t*) (buffer->address + 4 * (buffer->pitch / 4) * y + 4 * x)) = pixel;
 }
 
 void fillSquare(int x, int y, int volX, int volY, uint32_t color)
@@ -51,7 +51,7 @@ void _start(void)
     {
         done();
     }
-    struct limine_framebuffer *buffer = framebuffer_request.response->framebuffers[0];
+    struct limine_framebuffer* buffer = framebuffer_request.response->framebuffers[0];
 
     fillSquare(0, 0, buffer->width, buffer->height, 0x111111);
 
@@ -85,16 +85,11 @@ void _start(void)
 
     info("...IRQ", 6);
     irq_install();
-
-    ok("...Done", 7);
-    info("...Remapping PIC", 16);
-    PIC_remap(0x20, 0x28);
-    IRQ_clear_mask(IRQ1);
+    __asm__ volatile("sti");
 
     ok("...Done", 7);
 
     ok("Initialized kernel!", 19);
-    __asm__ volatile("sti");
 
     // We're done, just hang...
     done();

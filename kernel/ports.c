@@ -16,8 +16,8 @@ uint8_t port_byte_in(uint16_t port)
      * Inputs and outputs are separated by colons
      */
     __asm__("in %%dx, %%al"
-            : "=a"(result)
-            : "d"(port));
+        : "=a"(result)
+        : "d"(port));
     return result;
 }
 
@@ -29,32 +29,32 @@ void port_byte_out(uint16_t port, uint8_t data)
      * and none in the 'return' area
      */
     __asm__ volatile("out %%al, %%dx"
-                     :
-                     : "a"(data), "d"(port));
+        :
+    : "a"(data), "d"(port));
 }
 
 uint16_t port_word_in(uint16_t port)
 {
     uint16_t result;
     __asm__("in %%dx, %%ax"
-            : "=a"(result)
-            : "d"(port));
+        : "=a"(result)
+        : "d"(port));
     return result;
 }
 
 void port_word_out(uint16_t port, uint16_t data)
 {
     __asm__ volatile("out %%ax, %%dx"
-                     :
-                     : "a"(data), "d"(port));
+        :
+    : "a"(data), "d"(port));
 }
 
 // outportsm
-void outportsm(unsigned short port, unsigned char *data, unsigned long size)
+void outportsm(unsigned short port, unsigned char* data, unsigned long size)
 {
     __asm__ volatile("rep outsw"
-                     : "+S"(data), "+c"(size)
-                     : "d"(port));
+        : "+S"(data), "+c"(size)
+        : "d"(port));
 }
 
 // inportb
@@ -62,8 +62,8 @@ uint8_t inportsm(uint16_t port)
 {
     uint8_t result;
     __asm__("in %%dx, %%al"
-            : "=a"(result)
-            : "d"(port));
+        : "=a"(result)
+        : "d"(port));
     return result;
 }
 
@@ -72,8 +72,8 @@ uint16_t inports(uint16_t port)
 {
     uint16_t result;
     __asm__("in %%dx, %%ax"
-            : "=a"(result)
-            : "d"(port));
+        : "=a"(result)
+        : "d"(port));
     return result;
 }
 
